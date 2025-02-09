@@ -1,0 +1,227 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Películas y Categorías",
+        "description": "Documentación de la API para gestionar películas y categorías",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/categorias": {
+            "get": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Lista de categorías",
+                "description": "Obtener todas las categorías.",
+                "operationId": "66bfb3e0bf7747700be142ec5329dfae",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Categoria"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Agregar una categoría",
+                "description": "Almacenar una nueva categoría.",
+                "operationId": "acace4e67a5f9bbaa41b456c95b2bd05",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Categoria"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoría agregada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/categorias/{id}": {
+            "get": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Obtener una categoría especifica",
+                "description": "Obtener una Categoria por ID.",
+                "operationId": "af067e125b5f9a1b1306d9e5c2a5867e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/peliculas": {
+            "get": {
+                "tags": [
+                    "Películas"
+                ],
+                "summary": "Lista de películas",
+                "description": "Obtener todas las películas.",
+                "operationId": "ec16899ee7eef044d44557f0a3b44f3a",
+                "responses": {
+                    "200": {
+                        "description": "Lista de películas obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pelicula"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/peliculas/{id}": {
+            "get": {
+                "tags": [
+                    "Películas"
+                ],
+                "summary": "Obtener una película específica",
+                "description": "Obtener una película por ID.",
+                "operationId": "2b010267bd7d1e90b36fc44ed91ae71a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la película",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Película obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pelicula"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Categoria": {
+                "title": "Categoría",
+                "description": "Modelo de una categoría",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Acción"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Pelicula": {
+                "title": "Pelicula",
+                "description": "Modelo de una película",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "titulo": {
+                        "type": "string",
+                        "example": "Titanic"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Película romántica sobre el Titanic"
+                    },
+                    "categoria_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Categorías",
+            "description": "Categorías"
+        },
+        {
+            "name": "Películas",
+            "description": "Películas"
+        }
+    ]
+}
