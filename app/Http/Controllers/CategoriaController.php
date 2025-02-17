@@ -43,10 +43,13 @@ class CategoriaController extends Controller
      *     path="/api/categorias",
      *     summary="Agregar una categoría",
      *     tags={"Categorías"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Categoria")
-     *     ),
+     *      @OA\Parameter(
+     *          name="nombre",
+     *          in="query",
+     *          description="Nombre de la categoría",
+     *          required=true,
+     *          @OA\Schema(type="string")
+     *      ),
      *     @OA\Response(
      *         response=201,
      *         description="Categoría agregada con éxito",
@@ -65,16 +68,15 @@ class CategoriaController extends Controller
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255|unique:categorias',
             ]);
-    
+
             // Crear la categoría
             $categoria = Categoria::create($validated);
-    
+
             // Retornar respuesta con código 201 (Created)
             return response()->json([
                 'message' => 'Categoría agregada con éxito',
                 'data' => $categoria
             ], 201);
-    
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Error de validación',
@@ -115,18 +117,177 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualizar parcialmente una categoría existente.
+     *
+     * @OA\Patch(
+     *     path="/api/categorias/{id}",
+     *     summary="Actualizar parcialmente una categoría",
+     *     tags={"Categorías"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID de la categoría",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="nombre", type="string", example="Nuevo Nombre")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categoría actualizada parcialmente con éxito",
+     *         @OA\JsonContent(ref="#/components/schemas/Categoria")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Categoría no encontrada"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación"
+     *     )
+     * )
      */
-    public function update(Request $request, string $id)
+    public function partialUpdate(Request $request, string $id)
     {
-        //
+        // Buscar la categoría o devolver error 404 si no existe
+        $categoria = Categoria::find($id);
+
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'Categoría no encontrada'
+            ], 404);
+        }
+
+        // Validar solo los datos proporcionados (sin requerir todos los campos)
+        $validated = $request->validate([
+            'nombre' => 'sometimes|required|string|max:255|unique:categorias,nombre,' . $categoria->id,
+        ]);
+
+        // Actualizar solo los campos enviados en la solicitud
+        $categoria->update($validated);
+
+        // Retornar respuesta con código 200 (OK)
+        return response()->json([
+            'message' => 'Categoría actualizada parcialmente con éxito',
+            'data' => $categoria
+        ], 200);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Actualizar una categoría existente.
+     *
+     * @OA\PUT(
+     *     path="/api/categorias/{id}",
+     *     summary="Buscar y actualizar una categoría",
+     *     tags={"Categorías"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID de la categoría",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="nombre", type="string", example="Nueva Categoría")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Datos actuales de la categoría antes de editar y actualización exitosa",
+     *         @OA\JsonContent(ref="#/components/schemas/Categoria")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Categoría no encontrada"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación"
+     *     )
+     * )
      */
-    public function destroy(string $id)
+    public function update(Request $request, string $id)
     {
-        //
+        // Buscar la categoría o devolver error 404 si no existe
+        $categoria = Categoria::find($id);
+
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'Categoría no encontrada'
+            ], 404);
+        }
+
+        // Si la petición no tiene datos, devolver la categoría actual para edición
+        if ($request->isMethod('get') || !$request->all()) {
+            return response()->json([
+                'message' => 'Datos actuales de la categoría',
+                'data' => $categoria
+            ], 200);
+        }
+
+        // Validar los datos de entrada
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:categorias,nombre,' . $categoria->id,
+        ]);
+
+        // Actualizar la categoría
+        $categoria->update($validated);
+
+        // Retornar respuesta con código 200 (OK)
+        return response()->json([
+            'message' => 'Categoría actualizada con éxito',
+            'data' => $categoria
+        ], 200);
+    }
+
+    /**
+     * Eliminar la información de una categoría existente.
+     * @OA\Delete (
+     *     path="/api/categorias/{id}",
+     *     tags={"Categorías"},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="NO CONTENT"
+     *     ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="NOT FOUND",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="No se pudo realizar correctamente la operación"),
+     *          )
+     *      )
+     * )
+     */
+    public function destroy($id)
+    {
+        $categoria = Categoria::find($id);
+
+        if (is_null($categoria)) {
+            return response()->json(['message' => 'No se pudo realizar correctamente la operación'], 404);
+        }
+
+        $categoria->delete();
+
+        // Retornar respuesta de exito
+        $response = [
+            'message' => 'Categoría eliminada con exito',
+            'data' => $categoria
+        ];
+
+        return $response;
     }
 }

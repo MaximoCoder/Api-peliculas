@@ -22,7 +22,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Pelicula extends Model
 {
     use HasFactory;
-
+    // Permitimos el llenado de datos
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'duracion',
+        'rutaImagen',
+        'rutaLocalImagen',
+        'clasificacion',
+        'categoria_id'
+    ];
     // Relacionamos con la tabla categorias
     public function categoria()
     {

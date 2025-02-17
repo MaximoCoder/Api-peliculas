@@ -37,16 +37,17 @@
                 "summary": "Agregar una categoría",
                 "description": "Almacenar una nueva categoría.",
                 "operationId": "acace4e67a5f9bbaa41b456c95b2bd05",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Categoria"
-                            }
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "description": "Nombre de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "201": {
                         "description": "Categoría agregada con éxito",
@@ -95,6 +96,150 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Buscar y actualizar una categoría",
+                "description": "Actualizar una categoría existente.",
+                "operationId": "3465ccc7d2520d34b4c457d4158ae6ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Nueva Categoría"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Datos actuales de la categoría antes de editar y actualización exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Eliminar la información de una categoría existente.",
+                "operationId": "a37893cb60d6b5ca9b1d6d23dbe83041",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "NO CONTENT"
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No se pudo realizar correctamente la operación"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Actualizar parcialmente una categoría",
+                "description": "Actualizar parcialmente una categoría existente.",
+                "operationId": "65e7d7c83ce9622baf30f0102f1e0b6d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Nuevo Nombre"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoría actualizada parcialmente con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
             }
         },
         "/api/peliculas": {
@@ -115,6 +260,89 @@
                                     "items": {
                                         "$ref": "#/components/schemas/Pelicula"
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Películas"
+                ],
+                "summary": "Crear una nueva película",
+                "operationId": "8dbd956256347ce5405bba95dafe496b",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "descripcion",
+                                    "duracion",
+                                    "rutaImagen",
+                                    "clasificacion",
+                                    "categoria_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "descripcion": {
+                                        "type": "string"
+                                    },
+                                    "duracion": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "rutaImagen": {
+                                        "type": "file"
+                                    },
+                                    "clasificacion": {
+                                        "type": "integer"
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Película creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Película creada correctamente."
+                                        },
+                                        "pelicula": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -151,6 +379,173 @@
                                 }
                             }
                         }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Películas"
+                ],
+                "summary": "Actualizar una película",
+                "description": "Actualizar una película (PUT).",
+                "operationId": "96ec1444feac4a8955b1a942e84916bd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "descripcion",
+                                    "duracion",
+                                    "rutaImagen",
+                                    "rutaLocalImagen",
+                                    "clasificacion",
+                                    "categoria_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Avatar"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Película de ciencia ficción."
+                                    },
+                                    "duracion": {
+                                        "type": "number",
+                                        "example": 2.5
+                                    },
+                                    "rutaImagen": {
+                                        "type": "string",
+                                        "example": "https://example.com/avatar.jpg"
+                                    },
+                                    "rutaLocalImagen": {
+                                        "type": "string",
+                                        "example": "/images/avatar.jpg"
+                                    },
+                                    "clasificacion": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Película actualizada con éxito"
+                    },
+                    "404": {
+                        "description": "Película no encontrada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Películas"
+                ],
+                "summary": "Eliminar una película",
+                "description": "Eliminar una película.",
+                "operationId": "b82c498aa94c5562ad492f5428049e59",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Película eliminada con éxito"
+                    },
+                    "404": {
+                        "description": "Película no encontrada"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Películas"
+                ],
+                "summary": "Actualizar parcialmente una película",
+                "description": "Actualización parcial de una película (PATCH).",
+                "operationId": "976c457b7cb985c88ab58426cac48f8e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Avatar"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Película de ciencia ficción."
+                                    },
+                                    "duracion": {
+                                        "type": "number",
+                                        "example": 2.5
+                                    },
+                                    "rutaImagen": {
+                                        "type": "string",
+                                        "example": "https://example.com/avatar.jpg"
+                                    },
+                                    "rutaLocalImagen": {
+                                        "type": "string",
+                                        "example": "/images/avatar.jpg"
+                                    },
+                                    "clasificacion": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Película actualizada parcialmente con éxito"
+                    },
+                    "404": {
+                        "description": "Película no encontrada"
                     }
                 }
             }
